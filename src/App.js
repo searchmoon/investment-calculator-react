@@ -1,4 +1,5 @@
-import FromBox from "./components/Form/FromBox";
+import { useState } from "react";
+import FormBox from "./components/Form/FormBox";
 import Header from "./components/Header";
 import Td from "./components/TableList/Td";
 
@@ -26,7 +27,9 @@ function App() {
         yearlyContribution: yearlyContribution,
       });
     }
+    console.log(yearlyData);
 
+    return yearlyData;
     // do something with yearlyData ...
   };
 
@@ -34,7 +37,7 @@ function App() {
     <div>
       <Header />
 
-      <FromBox />
+      <FormBox onCalc={calculateHandler} />
       {/* Todo: Show below table conditionally (only once result data is available) */}
       {/* Show fallback text if no data is available */}
 

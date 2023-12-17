@@ -1,55 +1,57 @@
 import { useState } from "react";
-import styles from "./FormBox.module.css";
+import classes from "./FormBox.module.css";
 
 const FormBox = (props) => {
-  const initialValue = {
-    "current-savings": 0,
-    "yearly-contribution": 0,
-    "expected-return": 0,
-    duration: 0,
+  const initialUserInput = {
+    "current-savings": 10000, // 저축 시작 금액(초기 투자금)
+    "yearly-contribution": 1200, // 매년 저축 금액
+    "expected-return": 7, // 예상 환급 금액 (%)
+    duration: 10, // 저축 기간
   };
 
-  const [userInput, setInputValue] = useState(initialValue);
+  const [userInput, setUserInput] = useState(initialUserInput);
 
-  const changeHandler = (e) => {
-    setInputValue((prev) => ({
+  const inputChangeHandler = (e) => {
+    setUserInput((prev) => ({
       ...prev,
-      [e.target.name]: Number(e.target.value),
+      [e.target.id]: Number(e.target.value),
     }));
 
     console.log(userInput);
   };
 
+  const resetHandler = () => {
+    setUserInput(initialUserInput);
+  };
+
   return (
-    <form className={styles.form}>
-      <div className={styles["input-group"]}>
+    <form onSubmit={(e) => props.onCalc(e, userInput)} className={classes.form}>
+      <div className={classes["input-group"]}>
         <p>
           <label htmlFor="current-savings">Current Savings ($)</label>
           <input
-            onChange={changeHandler}
-            value={userInput.currentSavings}
+            onChange={inputChangeHandler}
+            value={userInput["current-savings"]}
             type="number"
             id="current-savings"
-            name="currentSavings"
           />
         </p>
         <p>
           <label htmlFor="yearly-contribution">Yearly Savings ($)</label>
           <input
-            onChange={changeHandler}
-            value={userInput.yearlyContribution}
+            onChange={inputChangeHandler}
+            value={userInput["yearly-contribution"]}
             type="number"
             id="yearly-contribution"
-            name="yearlyContribution"
           />
         </p>
       </div>
-      <div className={styles["input-group"]}>
+      <div className={classes["input-group"]}>
         <p>
           <label htmlFor="expected-return">Expected Interest (%, per year)</label>
           <input
-            onChange={changeHandler}
-            value={userInput.expectedReturn}
+            onChange={inputChangeHandler}
+            value={userInput["expected-return"]}
             type="number"
             id="expected-return"
             name="expectedReturn"
@@ -58,7 +60,7 @@ const FormBox = (props) => {
         <p>
           <label htmlFor="duration">Investment Duration (years)</label>
           <input
-            onChange={changeHandler}
+            onChange={inputChangeHandler}
             value={userInput.duration}
             type="number"
             id="duration"
@@ -66,11 +68,11 @@ const FormBox = (props) => {
           />
         </p>
       </div>
-      <p className={styles.actions}>
-        <button type="reset" className={styles.buttonAlt}>
+      <p className={classes.actions}>
+        <button onClick={resetHandler} type="reset" className={classes.buttonAlt}>
           Reset
         </button>
-        <button onClick={props.onCalc(userInput)} type="submit" className={styles.button}>
+        <button type="submit" className={classes.button}>
           Calculate
         </button>
       </p>

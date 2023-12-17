@@ -1,21 +1,23 @@
 import { useState } from "react";
 import FormBox from "./components/Form/FormBox";
-import Header from "./components/Header";
-import Td from "./components/TableList/Td";
+import Header from "./components/Header/Header";
+import ResultsTable from "./components/ResultsTable/ResultsTable";
 
 function App() {
-  const calculateHandler = (userInput) => {
-    // Should be triggered when form is submitted
-    // You might not directly want to bind it to the submit event on the form though...
+  const [userInput, setUserInput] = useState(null);
 
-    const yearlyData = []; // per-year results
+  const calculateHandler = (e, userInput) => {
+    e.preventDefault();
+    setUserInput(userInput);
+  };
 
-    let currentSavings = +userInput["current-savings"]; // feel free to change the shape of this input object!
-    const yearlyContribution = +userInput["yearly-contribution"]; // as mentioned: feel free to change the shape...
+  const yearlyData = [];
+  if (userInput) {
+    let currentSavings = +userInput["current-savings"];
+    const yearlyContribution = +userInput["yearly-contribution"];
     const expectedReturn = +userInput["expected-return"] / 100;
     const duration = +userInput["duration"];
 
-    // The below code calculates yearly results (total savings, interest etc)
     for (let i = 0; i < duration; i++) {
       const yearlyInterest = currentSavings * expectedReturn;
       currentSavings += yearlyInterest + yearlyContribution;
@@ -27,34 +29,21 @@ function App() {
         yearlyContribution: yearlyContribution,
       });
     }
-    console.log(yearlyData);
-
-    return yearlyData;
-    // do something with yearlyData ...
-  };
-
+  }
   return (
     <div>
       <Header />
 
-      <FormBox onCalc={calculateHandler} />
-      {/* Todo: Show below table conditionally (only once result data is available) */}
-      {/* Show fallback text if no data is available */}
-
-      <table className="result">
-        <thead>
-          <tr>
-            <th>Year</th>
-            <th>Total Savings</th>
-            <th>Interest (Year)</th>
-            <th>Total Interest</th>
-            <th>Invested Capital</th>
-          </tr>
-        </thead>
-        <tbody>
-          <Td />
-        </tbody>
-      </table>
+      <FormBox
+        onCalc={calculateHandler}
+        // userInput={userInput}
+        // setUserInput={setUserInput}
+        // initialUserInput={initialUserInput}
+      />
+      {!userInput && <p style={{ textAlign: "center" }}>No investment calculated yet.</p>}
+      {userInput && (
+        <ResultsTable data={yearlyData} initialInvestment={userInput["current-savings"]} />
+      )}
     </div>
   );
 }
